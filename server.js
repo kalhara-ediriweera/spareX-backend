@@ -68,18 +68,22 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Ensure default folders and basic placeholders exist
 const setupStaticAssets = () => {
-  const assets = [
-    'uploads/products/default.jpg',
-    'uploads/profiles/default.png'
-  ];
-  assets.forEach(asset => {
-    const fullPath = path.join(__dirname, asset);
-    if (!fs.existsSync(fullPath)) {
-      const dir = path.dirname(fullPath);
-      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-      fs.writeFileSync(fullPath, ''); // Create empty placeholder file
-    }
-  });
+  try {
+    const assets = [
+      'uploads/products/default.jpg',
+      'uploads/profiles/default.png'
+    ];
+    assets.forEach(asset => {
+      const fullPath = path.join(__dirname, asset);
+      if (!fs.existsSync(fullPath)) {
+        const dir = path.dirname(fullPath);
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        fs.writeFileSync(fullPath, ''); // Create empty placeholder file
+      }
+    });
+  } catch (error) {
+    console.warn('Could not setup static assets (possibly read-only filesystem):', error.message);
+  }
 };
 setupStaticAssets();
 
